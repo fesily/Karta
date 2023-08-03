@@ -6,7 +6,7 @@ import os
 ## Basic Global Configurations ##
 #################################
 
-DISASSEMBLER_PATH = "/opt/ida-7.4/ida"
+DISASSEMBLER_PATH = "C:\\Users\\fesil\\Desktop\\IDA_Pro_7.7\\ida64"
 SCRIPT_PATH = os.path.abspath("analyze_src_file.py")
 
 LIBRARY_NAME            = "Karta"

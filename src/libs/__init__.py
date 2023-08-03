@@ -3,6 +3,7 @@ from .lib_factory    import *
 # Open Source Libraries
 from .libpng         import *
 from .zlib           import *
+from .lua            import *
 from .openssl        import *
 from .openssh        import *
 from .netsnmp        import *

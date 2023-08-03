@@ -288,7 +288,6 @@ def main(args):
     prompter.info("Starting the Script")
 
     # requesting the path to the chosen disassembler
-    setDisassemblerPath(prompter)
     disas_cmd = identifyDisassemblerHandler(getDisasPath(), prompter)
     if disas_cmd is None:
         return
