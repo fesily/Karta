@@ -20,6 +20,13 @@ class LuaSeeker(Seeker):
             number of library instances that were found in the binary
         """
         key_string = "$Lua: Lua "
+        version_strings = ["Lua 5.1", "Lua 5.2", "Lua 5.3", "Lua 5.4"]
+        version_maps = {
+            "Lua 5.1": "$Lua: Lua 5.1.4",
+            "Lua 5.2": "$Lua: Lua 5.2.3",
+            "Lua 5.3": "$Lua: Lua 5.3.6",
+            "Lua 5.4": "$Lua: Lua 5.4.6"
+        }
         error_strings = ["ipairs", "pairs", "coroutine", "__gc", "__tostring", "__close"]
         key_error_strings = [error_strings[0], error_strings[-1]]
         matched_error_strings = defaultdict(list)
@@ -37,10 +44,14 @@ class LuaSeeker(Seeker):
                 # valid match
                 logger.debug(f"Located a copyright string of {self.NAME} in address 0x{bin_str.ea:x} :{copyright_string}")
                 # save the string for later
+                self._version_strings.clear()
                 self._version_strings.append(copyright_string)
+            elif len(self._version_strings) == 0 and str(bin_str) in version_strings:
+                logger.debug(f"Located a version string of {self.NAME} in address 0x{bin_str.ea:x}")
+                self._version_strings.append(version_maps[str(bin_str)])
             # use the error strings as backups
             elif str(bin_str) in key_error_strings and len(self._version_strings) == 0:
-                logger.debug(f"Located a key error string of {self.NAME} in address 0x{bin_str.ea:x} :{copyright_string}")
+                logger.debug(f"Located a key error string of {self.NAME} in address 0x{bin_str.ea:x}")
                 matched_error_strings[str(bin_str)].append(bin_str)
 
         # check if we need the backup
@@ -69,12 +80,12 @@ class LuaSeeker(Seeker):
         if len(self._version_strings) == 1 and self.VERSION_UNKNOWN in self._version_strings:
             return self._version_strings
         # continue as before
-        results = []
+        results = set()
         # extract the version from the copyright string
         for work_str in self._version_strings:
-            results.append(self.extractVersion(work_str, start_index=work_str.find(self.VERSION_STRING) + len(self.VERSION_STRING)))
+            results.add(self.extractVersion(work_str, start_index=work_str.find(self.VERSION_STRING) + len(self.VERSION_STRING)))
         # return the result
-        return results
+        return list(results)
 
 
 # Register our class
